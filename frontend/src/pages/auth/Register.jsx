@@ -51,13 +51,11 @@ export default function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validasi wajib centang kebijakan privasi
     if (!formData.setujuPrivasi) {
       setErrorMessage('Anda harus menyetujui kebijakan privasi terlebih dahulu untuk membuat akun.');
       return;
     }
 
-    // Validasi kata sandi minimal 8 karakter kombinasi huruf dan angka
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d\W]{8,}$/;
     if (!passwordRegex.test(formData.kataSandi)) {
       setErrorMessage('Kata sandi harus minimal 8 karakter dengan kombinasi huruf dan angka.');
@@ -69,7 +67,6 @@ export default function Register() {
       return;
     }
 
-    // Sementara sebelum terhubung ke API Laravel:
     console.log('Data registrasi orang tua:', formData);
     alert('Akun keluarga berhasil dibuat! Silakan masuk untuk menambahkan profil anak.');
     navigate('/login');
@@ -77,14 +74,11 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-[#F7F5F0] flex flex-col pb-12">
-      {/* Floating Navbar */}
       <Navbar />
 
-      {/* Main Content */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
-          {/* Kolom Kiri: Panel Informasi & Langkah Registrasi */}
           <aside className="lg:col-span-5 bg-[#2E5780] rounded-[24px] p-7 sm:p-8 text-white shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
             <p className="text-xs font-medium text-white/85">
               Registrasi orang tua
@@ -93,10 +87,8 @@ export default function Register() {
               Mulai catatan tumbuh kembang anak Anda
             </h1>
 
-            {/* Stepper 1 - 2 - 3 */}
             <div className="mt-6 space-y-4">
               <div className="grid grid-cols-2 gap-3">
-                {/* Langkah 1 */}
                 <div className="flex items-start gap-2.5">
                   <span className="w-7 h-7 rounded-full bg-white/15 text-white text-xs font-semibold flex items-center justify-center shrink-0 mt-0.5">
                     1
@@ -109,7 +101,6 @@ export default function Register() {
                   </div>
                 </div>
 
-                {/* Langkah 2 */}
                 <div className="flex items-start gap-2.5">
                   <span className="w-7 h-7 rounded-full bg-white/15 text-white text-xs font-semibold flex items-center justify-center shrink-0 mt-0.5">
                     2
@@ -123,7 +114,6 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Langkah 3 (Posisi Tengah) */}
               <div className="flex justify-center pt-0.5">
                 <div className="flex items-start gap-2.5">
                   <span className="w-7 h-7 rounded-full bg-white/15 text-white text-xs font-semibold flex items-center justify-center shrink-0 mt-0.5">
@@ -139,7 +129,6 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Daftar Fitur Aplikasi */}
             <div className="mt-7">
               <h2 className="text-lg sm:text-[19px] font-bold leading-snug">
                 Apa yang bisa anda lakukan di aplikasi?
@@ -162,7 +151,6 @@ export default function Register() {
               </ul>
             </div>
 
-            {/* Kotak Catatan Perlindungan Data */}
             <div className="mt-7 bg-white/[0.12] rounded-2xl p-4">
               <p className="text-xs font-bold text-white">
                 Data Anda terlindungi.
@@ -173,7 +161,6 @@ export default function Register() {
             </div>
           </aside>
 
-          {/* Kolom Kanan: Formulir Buat Akun Keluarga */}
           <section className="lg:col-span-7 bg-white rounded-[24px] p-7 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.03)]">
             <h2 className="text-2xl sm:text-[28px] font-bold text-[#2E5780] tracking-tight">
               Buat akun keluarga
@@ -189,7 +176,6 @@ export default function Register() {
             )}
 
             <form onSubmit={handleSubmit} className="mt-6">
-              {/* Sub-bagian: Data orang tua */}
               <h3 className="text-base sm:text-lg font-bold text-[#1E293B]">
                 Data orang tua
               </h3>
@@ -271,13 +257,11 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Sub-bagian: Keamanan akun */}
               <h3 className="text-base sm:text-lg font-bold text-[#1E293B] mt-6">
                 Keamanan akun
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4 mt-3.5">
-                {/* Input Kata Sandi + Tombol Lihat */}
                 <div>
                   <label
                     htmlFor="kataSandi"
@@ -307,7 +291,6 @@ export default function Register() {
                   </div>
                 </div>
 
-                {/* Input Konfirmasi Kata Sandi + Tombol Lihat */}
                 <div>
                   <label
                     htmlFor="konfirmasiKataSandi"
@@ -342,7 +325,6 @@ export default function Register() {
                 Gunakan minimal 8 karakter dengan kombinasi huruf dan angka.
               </p>
 
-              {/* Checkbox Persetujuan Privasi (Wajib Dicentang) */}
               <label className="flex items-start gap-2.5 mt-3.5 cursor-pointer select-none">
                 <input
                   type="checkbox"
@@ -357,7 +339,6 @@ export default function Register() {
                 </span>
               </label>
 
-              {/* Tombol Aksi */}
               <div className="flex flex-col sm:flex-row items-center gap-3.5 mt-6">
                 <Link
                   to="/login"
