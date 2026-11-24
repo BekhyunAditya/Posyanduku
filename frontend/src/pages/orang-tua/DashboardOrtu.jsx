@@ -186,6 +186,15 @@ export default function DashboardOrtu() {
               <p>{DASHBOARD_DATA.kunjunganBerikutnya.tempat}</p>
               <p>{DASHBOARD_DATA.kunjunganBerikutnya.posyandu}</p>
             </div>
+
+            {/* Tombol Pintasan ke Checklist Kesiapan */}
+            <Link
+                to="/ortu/panduan-kunjungan"
+                className="mt-5 w-full bg-[#F3831E] hover:bg-[#e07414] text-white text-xs sm:text-[13px] font-semibold py-2.5 px-5 rounded-full flex items-center justify-center gap-1.5 transition-colors"
+              >
+                <span>Siapkan kunjungan</span>
+                <span aria-hidden="true">→</span>
+              </Link>
           </section>
         </div>
 
