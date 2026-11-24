@@ -11,6 +11,9 @@ import NotifikasiPengingat from './pages/orang-tua/NotifikasiPengingat';
 import ProfilAnak from './pages/orang-tua/ProfilAnak';
 import TambahProfilAnak from './pages/orang-tua/TambahProfilAnak';
 import KonfirmasiPenyimpanan from './pages/orang-tua/KonfirmasiPenyimpanan';
+import JadwalImunisasi from './pages/orang-tua/JadwalImunisasi';
+import CatatanKonsultasi from './pages/orang-tua/CatatanKonsultasi';
+import CatatanTersimpan from './pages/orang-tua/CatatanTersimpan';
 
 export default function App() {
   return (
@@ -24,11 +27,15 @@ export default function App() {
         <Route path="/ortu/pertumbuhan" element={<PantauPertumbuhan />} />
         <Route path="/ortu/buku-kia" element={<BukuKiaDigital />} />
         <Route path="/ortu/panduan-kunjungan" element={<PanduanKunjungan />} />
+        <Route path="/ortu/panduan-kunjungan/catatan" element={<CatatanKonsultasi />} />
+        <Route path="/ortu/panduan-kunjungan/catatan-tersimpan" element={<CatatanTersimpan />} />
+        <Route path="/ortu/panduan-tindakan" element={<CatatanKonsultasi />} />
         <Route path="/ortu/jadwal-posyandu" element={<KalenderPosyandu />} />
         <Route path="/ortu/pengingat" element={<NotifikasiPengingat />} />
         <Route path="/ortu/profil-anak" element={<ProfilAnak />} />
         <Route path="/ortu/tambah-anak" element={<TambahProfilAnak />} />
         <Route path="/ortu/profil-anak/konfirmasi" element={<KonfirmasiPenyimpanan />} />
+        <Route path="/ortu/imunisasi" element={<JadwalImunisasi />} />
       </Routes>
     </BrowserRouter>
   );
