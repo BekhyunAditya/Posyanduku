@@ -8,6 +8,9 @@ import BukuKiaDigital from './pages/orang-tua/BukuKiaDigital';
 import PanduanKunjungan from './pages/orang-tua/PanduanKunjungan';
 import KalenderPosyandu from './pages/orang-tua/KalenderPosyandu';
 import NotifikasiPengingat from './pages/orang-tua/NotifikasiPengingat';
+import ProfilAnak from './pages/orang-tua/ProfilAnak';
+import TambahProfilAnak from './pages/orang-tua/TambahProfilAnak';
+import KonfirmasiPenyimpanan from './pages/orang-tua/KonfirmasiPenyimpanan';
 
 export default function App() {
   return (
@@ -23,6 +26,9 @@ export default function App() {
         <Route path="/ortu/panduan-kunjungan" element={<PanduanKunjungan />} />
         <Route path="/ortu/jadwal-posyandu" element={<KalenderPosyandu />} />
         <Route path="/ortu/pengingat" element={<NotifikasiPengingat />} />
+        <Route path="/ortu/profil-anak" element={<ProfilAnak />} />
+        <Route path="/ortu/tambah-anak" element={<TambahProfilAnak />} />
+        <Route path="/ortu/profil-anak/konfirmasi" element={<KonfirmasiPenyimpanan />} />
       </Routes>
     </BrowserRouter>
   );
