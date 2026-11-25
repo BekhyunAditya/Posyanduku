@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavbarOrtu from '../../components/layout/NavbarOrtu';
-import ibuAnakImg from '../../assets/images/ibu-anak-login.png';
+import ibuAnakImg from '../../assets/images/catatan-Konsul.png';
 
 const CONSULTATION_STORAGE_KEY = 'posyanduku_konsultasi_note';
 

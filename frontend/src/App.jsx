@@ -14,6 +14,8 @@ import KonfirmasiPenyimpanan from './pages/orang-tua/KonfirmasiPenyimpanan';
 import JadwalImunisasi from './pages/orang-tua/JadwalImunisasi';
 import CatatanKonsultasi from './pages/orang-tua/CatatanKonsultasi';
 import CatatanTersimpan from './pages/orang-tua/CatatanTersimpan';
+import EdukasiArtikel from './pages/orang-tua/EdukasiArtikel';
+import DetailEdukasi from './pages/orang-tua/DetailEdukasi';
 
 export default function App() {
   return (
@@ -36,6 +38,8 @@ export default function App() {
         <Route path="/ortu/tambah-anak" element={<TambahProfilAnak />} />
         <Route path="/ortu/profil-anak/konfirmasi" element={<KonfirmasiPenyimpanan />} />
         <Route path="/ortu/imunisasi" element={<JadwalImunisasi />} />
+        <Route path="/edukasi" element={<EdukasiArtikel />} />
+        <Route path="/edukasi/:slug" element={<DetailEdukasi />} />
       </Routes>
     </BrowserRouter>
   );
