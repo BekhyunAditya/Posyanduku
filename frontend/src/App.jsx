@@ -22,6 +22,8 @@ import KonfirmasiPenyimpanan from './pages/orang-tua/KonfirmasiPenyimpanan';
 import JadwalImunisasi from './pages/orang-tua/JadwalImunisasi';
 import EdukasiArtikel from './pages/orang-tua/EdukasiArtikel';
 import DetailEdukasi from './pages/orang-tua/DetailEdukasi';
+import DashboardKader from './pages/kader/DashboardKader';
+import DataBalita from './pages/kader/DataBalita';
 
 function App() {
   return (
@@ -51,6 +53,10 @@ function App() {
         <Route path="/ortu/imunisasi" element={<JadwalImunisasi />} />
         <Route path="/edukasi" element={<EdukasiArtikel />} />
         <Route path="/edukasi/:slug" element={<DetailEdukasi />} />
+
+        {/* Panel Kader Posyandu */}
+        <Route path="/kader/dashboard" element={<DashboardKader />} />
+        <Route path="/kader/data-balita" element={<DataBalita />} />
       </Routes>
     </Router>
   );
