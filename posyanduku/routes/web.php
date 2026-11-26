@@ -8,9 +8,10 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Halaman utama
-Route::get('/', function () {
-    return redirect('/login');
-});
+Route::get('/', fn() => Inertia::render('LandingPage'));
+
+Route::get('/edukasi', fn() => Inertia::render('OrangTua/EdukasiArtikel'));
+Route::get('/edukasi/{slug}', fn(string $slug) => Inertia::render('OrangTua/DetailEdukasi', ['slug' => $slug]));
 
 // Dashboard bawaan Laravel
 Route::get('/dashboard', function () {
@@ -30,19 +31,19 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('ortu')->group(function () {
     // Dashboard
-    Route::get('/dashboard', fn () => Inertia::render('OrangTua/DashboardOrtu'));
+    Route::get('/dashboard', fn() => Inertia::render('OrangTua/DashboardOrtu'));
 
     // Pertumbuhan anak
-    Route::get('/pertumbuhan', fn () => Inertia::render('OrangTua/PantauPertumbuhan'));
+    Route::get('/pertumbuhan', fn() => Inertia::render('OrangTua/PantauPertumbuhan'));
 
     // Buku KIA
-    Route::get('/buku-kia', fn () => Inertia::render('OrangTua/BukuKiaDigital'));
+    Route::get('/buku-kia', fn() => Inertia::render('OrangTua/BukuKiaDigital'));
 
     // Panduan kunjungan
-    Route::get('/panduan-kunjungan', fn () => Inertia::render('OrangTua/PanduanKunjungan'));
+    Route::get('/panduan-kunjungan', fn() => Inertia::render('OrangTua/PanduanKunjungan'));
 
     // Form catatan konsultasi
-    Route::get('/panduan-kunjungan/catatan', fn () => Inertia::render('OrangTua/CatatanKonsultasi'));
+    Route::get('/panduan-kunjungan/catatan', fn() => Inertia::render('OrangTua/CatatanKonsultasi'));
 
     // Menyimpan catatan konsultasi ke session
     Route::post('/panduan-kunjungan/catatan-tersimpan', function (Request $request) {
@@ -59,19 +60,19 @@ Route::prefix('ortu')->group(function () {
     });
 
     // Alias panduan tindakan
-    Route::get('/panduan-tindakan', fn () => Inertia::render('OrangTua/CatatanKonsultasi'));
+    Route::get('/panduan-tindakan', fn() => Inertia::render('OrangTua/CatatanKonsultasi'));
 
     // Jadwal Posyandu
-    Route::get('/jadwal-posyandu', fn () => Inertia::render('OrangTua/KalenderPosyandu'));
+    Route::get('/jadwal-posyandu', fn() => Inertia::render('OrangTua/KalenderPosyandu'));
 
     // Pengingat
-    Route::get('/pengingat', fn () => Inertia::render('OrangTua/NotifikasiPengingat'));
+    Route::get('/pengingat', fn() => Inertia::render('OrangTua/NotifikasiPengingat'));
 
     // Profil anak
-    Route::get('/profil-anak', fn () => Inertia::render('OrangTua/ProfilAnak'));
+    Route::get('/profil-anak', fn() => Inertia::render('OrangTua/ProfilAnak'));
 
     // Tambah profil anak
-    Route::get('/tambah-anak', fn () => Inertia::render('OrangTua/TambahProfilAnak'));
+    Route::get('/tambah-anak', fn() => Inertia::render('OrangTua/TambahProfilAnak'));
 
     // Menerima data profil anak dari form edit atau tambah
     Route::post('/profil-anak/konfirmasi', function (Request $request) {
@@ -88,8 +89,12 @@ Route::prefix('ortu')->group(function () {
     });
 
     // Imunisasi
-    Route::get('/imunisasi', fn () => Inertia::render('OrangTua/JadwalImunisasi'));
-
+    Route::get('/imunisasi', fn() => Inertia::render('OrangTua/JadwalImunisasi'));
 });
 
-require __DIR__.'/auth.php';
+
+Route::prefix('kader')->group(function () {
+    Route::get('/dashboard', fn() => Inertia::render('Kader/DashboardKader'));
+    Route::get('/data-balita', fn() => Inertia::render('Kader/DataBalita'));
+});
+require __DIR__ . '/auth.php';
