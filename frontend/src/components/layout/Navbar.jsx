@@ -1,111 +1,151 @@
-import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import logoImg from '../../assets/images/Logo.png';
+import Logo from '../../assets/images/Logo.png';
 
-const PUBLIC_NAV_ITEMS = [
-  { label: 'Layanan', to: '/#layanan', isHash: true },
-  { label: 'Cara Kerja', to: '/#cara-kerja', isHash: true },
-  { label: 'Edukasi', to: '/edukasi', isHash: false },
-  { label: 'Tentang Kami', to: '/#tentang-kami', isHash: true },
-];
-
-export default function Navbar() {
+const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
-  const handleHashClick = (e, to) => {
-    setMobileMenuOpen(false);
-    const hash = to.split('#')[1];
-    if (window.location.pathname === '/' && hash) {
-      const target = document.getElementById(hash);
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  };
+  const isLandingPage = location.pathname === '/';
+
+  // Menu untuk Beranda Publik
+  const landingNavItems = [
+    { label: 'Beranda', to: '/' },
+    { label: 'Pertumbuhan', to: '/ortu/pertumbuhan' },
+    { label: 'Jadwal', to: '/ortu/jadwal-posyandu' },
+    { label: 'Edukasi', to: '/edukasi' },
+  ];
+
+  // Menu untuk halaman Auth / Publik lainnya
+  const defaultNavItems = [
+    { label: 'Layanan', to: '/#layanan' },
+    { label: 'Cara Kerja', to: '/#cara-kerja' },
+    { label: 'Edukasi', to: '/edukasi' },
+    { label: 'Tentang Kami', to: '/#tentang-kami' },
+  ];
+
+  const navItems = isLandingPage ? landingNavItems : defaultNavItems;
+
+  // Samakan lebar container navbar dengan container konten di bawahnya
+  const containerWidthClass = isLandingPage
+    ? 'max-w-[1160px] px-5 sm:px-8 py-3.5'
+    : 'max-w-[1080px] px-6 py-3';
 
   return (
-    <header className="w-full pt-6 px-4 sm:px-6 lg:px-8">
-      <nav className="max-w-5xl mx-auto bg-white rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.05)] px-5 sm:px-8 py-3 flex items-center justify-between gap-4">
-        {/* 1. Sisi Kiri: Logo & Nama Brand Posyanduku */}
-        <Link to="/" className="flex items-center gap-2.5 shrink-0">
+    <header className="w-full pt-5 px-4 sm:px-6 lg:px-8">
+      <nav
+        className={`${containerWidthClass} mx-auto bg-white rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100/80 flex items-center justify-between transition-all`}
+      >
+        {/* Kiri: Logo + Brand */}
+        <Link to="/" className="flex items-center gap-2.5 group">
           <img
-            src={logoImg}
+            src={Logo}
             alt="Logo Posyanduku"
-            className="w-9 h-9 object-contain shrink-0"
+            className="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-105"
           />
-          <span className="text-xl font-bold tracking-tight text-[#315B87]">
+          <span className="text-[19px] font-bold tracking-tight text-[#315B87]">
             Posyanduku
           </span>
         </Link>
 
-        {/* 2. Menu Navigasi Desktop (Jarak Antar-Item Otomatis Sama Rata) */}
-        {PUBLIC_NAV_ITEMS.map((item) =>
-          item.isHash ? (
-            <Link
-              key={item.label}
-              to={item.to}
-              onClick={(e) => handleHashClick(e, item.to)}
-              className="hidden md:inline-block pb-0.5 text-[15px] font-medium text-[#1D3B58] hover:text-[#315B87] transition-colors whitespace-nowrap"
-            >
-              {item.label}
-            </Link>
-          ) : (
-            <NavLink
-              key={item.label}
-              to={item.to}
-              className={({ isActive }) =>
-                `hidden md:inline-block pb-0.5 text-[15px] font-medium transition-colors whitespace-nowrap ${
-                  isActive
-                    ? 'font-semibold text-[#315B87] border-b-2 border-[#315B87]'
-                    : 'text-[#1D3B58] hover:text-[#315B87]'
-                }`
-              }
-            >
-              {item.label}
-            </NavLink>
-          )
-        )}
+        {/* Tengah: Menu Desktop */}
+        <div className="hidden md:flex items-center gap-10 lg:gap-12">
+          {navItems.map((item) =>
+            item.to.startsWith('/#') ? (
+              <a
+                key={item.label}
+                href={item.to}
+                className="py-1 text-[14px] font-semibold text-[#475569] hover:text-[#315B87] transition-colors duration-200"
+              >
+                {item.label}
+              </a>
+            ) : (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === '/'}
+                className={({ isActive }) =>
+                  `relative py-1 text-[14px] font-semibold transition-colors duration-200 ${
+                    isActive
+                      ? 'text-[#1D3B58] after:content-[""] after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-[2px] after:bg-[#315B87] after:rounded-full'
+                      : 'text-[#475569] hover:text-[#315B87]'
+                  }`
+                }
+              >
+                {item.label}
+              </NavLink>
+            )
+          )}
+        </div>
 
-        {/* 3. Sisi Kanan: Tombol Kapsul Masuk & Toggle Mobile */}
-        <div className="flex items-center gap-2.5 shrink-0">
+        {/* Kanan: Tombol Masuk */}
+        <div className="hidden md:flex items-center">
           <Link
             to="/login"
-            className="bg-[#315B87] hover:bg-[#26486b] text-white text-sm sm:text-[15px] font-bold px-8 sm:px-11 py-2.5 rounded-full transition-colors whitespace-nowrap"
+            className="bg-[#315B87] hover:bg-[#234466] text-white text-[14px] font-semibold px-7 py-2.5 rounded-full transition-all duration-200 shadow-sm hover:shadow"
           >
             Masuk
           </Link>
-
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen((prev) => !prev)}
-            className="md:hidden p-2 rounded-full text-[#1D3B58] hover:bg-slate-100 transition-colors cursor-pointer"
-            aria-label="Buka menu navigasi"
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
         </div>
+
+        {/* Hamburger Menu Mobile */}
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
+          className="md:hidden p-2 rounded-full text-[#1D3B58] hover:bg-slate-100 transition-colors"
+          aria-label="Toggle Menu"
+        >
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </nav>
 
-      {/* Panel Menu Navigasi Mobile */}
+      {/* Dropdown Mobile */}
       {mobileMenuOpen && (
-        <div className="md:hidden max-w-5xl mx-auto mt-2.5 bg-white rounded-2xl shadow-[0_8px_24px_rgba(0,0,0,0.06)] p-4">
-          <ul className="flex flex-col gap-1.5 text-sm font-medium text-[#1D3B58]">
-            {PUBLIC_NAV_ITEMS.map((item) => (
-              <li key={item.label}>
-                <Link
-                  to={item.to}
-                  onClick={(e) => handleHashClick(e, item.to)}
-                  className="block px-4 py-2.5 rounded-xl hover:bg-[#F7F5F0] transition-colors"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+        <div
+          className={`md:hidden mx-auto mt-2 bg-white rounded-[24px] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-slate-100 flex flex-col gap-3 ${
+            isLandingPage ? 'max-w-[1160px]' : 'max-w-[1080px]'
+          }`}
+        >
+          {navItems.map((item) =>
+            item.to.startsWith('/#') ? (
+              <a
+                key={item.label}
+                href={item.to}
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-4 py-2.5 rounded-xl text-sm font-semibold text-[#475569] hover:bg-slate-50 transition-colors"
+              >
+                {item.label}
+              </a>
+            ) : (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === '/'}
+                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  `px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                    isActive
+                      ? 'bg-[#C5E3FA]/50 text-[#1D3B58]'
+                      : 'text-[#475569] hover:bg-slate-50'
+                  }`
+                }
+              >
+                {item.label}
+              </NavLink>
+            )
+          )}
+          <Link
+            to="/login"
+            onClick={() => setMobileMenuOpen(false)}
+            className="mt-1 w-full text-center bg-[#315B87] hover:bg-[#234466] text-white text-sm font-semibold py-3 rounded-full transition-colors"
+          >
+            Masuk
+          </Link>
         </div>
       )}
     </header>
   );
-}
+};
+
+export default Navbar;
