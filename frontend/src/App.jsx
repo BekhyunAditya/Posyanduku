@@ -22,8 +22,13 @@ import KonfirmasiPenyimpanan from './pages/orang-tua/KonfirmasiPenyimpanan';
 import JadwalImunisasi from './pages/orang-tua/JadwalImunisasi';
 import EdukasiArtikel from './pages/orang-tua/EdukasiArtikel';
 import DetailEdukasi from './pages/orang-tua/DetailEdukasi';
+
+// Halaman Kader
 import DashboardKader from './pages/kader/DashboardKader';
 import DataBalita from './pages/kader/DataBalita';
+import DetailBalita from './pages/kader/DetailBalita';
+import CatatPengukuran from './pages/kader/CatatPengukuran';
+import PelayananVerifikasi from './pages/kader/PelayananVerifikasi';
 
 function App() {
   return (
@@ -57,6 +62,9 @@ function App() {
         {/* Panel Kader Posyandu */}
         <Route path="/kader/dashboard" element={<DashboardKader />} />
         <Route path="/kader/data-balita" element={<DataBalita />} />
+        <Route path="/kader/data-balita/:slug" element={<DetailBalita />} />
+        <Route path="/kader/pengukuran" element={<CatatPengukuran />} />
+        <Route path="/kader/pelayanan" element={<PelayananVerifikasi />} />
       </Routes>
     </Router>
   );

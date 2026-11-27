@@ -1,6 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { Search, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import SidebarKader from '../../components/layout/SidebarKader';
+
+const toSlug = (name) => name.toLowerCase().trim().replace(/\s+/g, '-');
 
 // 8 data awal halaman 1 sesuai tampilan Figma + 120 data lanjutan (total 128: 62 Laki-laki, 66 Perempuan)
 const INITIAL_BALITA_DATA = (() => {
@@ -97,6 +100,7 @@ const GENDER_OPTIONS = [
 const ITEMS_PER_PAGE = 8;
 
 const DataBalita = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUsia, setSelectedUsia] = useState('all');
   const [selectedGender, setSelectedGender] = useState('all');
@@ -356,7 +360,8 @@ const DataBalita = () => {
                   paginatedData.map((row) => (
                     <tr
                       key={row.id}
-                      className="hover:bg-slate-50/90 transition-colors"
+                      onClick={() => navigate(`/kader/data-balita/${toSlug(row.nama)}`)}
+                      className="hover:bg-slate-50/90 transition-colors cursor-pointer"
                     >
                       <td className="py-3.5 px-4 font-medium">{row.nama}</td>
                       <td className="py-3.5 px-4 text-center">
