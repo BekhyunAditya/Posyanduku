@@ -107,7 +107,7 @@ const SidebarKader = () => {
                 </div>
 
                 <Link
-                    href="/login"
+                    href={route('login')}
                     className="mt-3.5 w-full block text-center bg-[#366491] hover:bg-[#4173A4] text-white text-[14px] font-bold py-2 rounded-full transition-colors duration-200 shadow-sm"
                 >
                     Keluar

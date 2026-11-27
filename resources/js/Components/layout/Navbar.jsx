@@ -85,7 +85,7 @@ const Navbar = () => {
         {/* Kanan: Tombol Masuk */}
         <div className="hidden md:flex items-center">
           <Link
-            href="/login"
+            href={route('login')}
             className="bg-[#315B87] hover:bg-[#234466] text-white text-[14px] font-semibold px-7 py-2.5 rounded-full transition-all duration-200 shadow-sm hover:shadow"
           >
             Masuk
@@ -138,7 +138,7 @@ const Navbar = () => {
             )
           )}
           <Link
-            href="/login"
+            href={route('login')}
             onClick={() => setMobileMenuOpen(false)}
             className="mt-1 w-full text-center bg-[#315B87] hover:bg-[#234466] text-white text-sm font-semibold py-3 rounded-full transition-colors"
           >

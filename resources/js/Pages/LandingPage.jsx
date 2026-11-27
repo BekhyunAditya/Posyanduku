@@ -133,7 +133,7 @@ const LandingPage = () => {
                             {/* Tombol CTA */}
                             <div className="mt-7 flex flex-wrap items-center gap-3.5">
                                 <Link
-                                    href="/register"
+                                    href={route('register')}
                                     className="bg-[#F3831E] hover:bg-[#e07414] text-white text-[14px] font-semibold px-7 py-3.5 rounded-full shadow-[0_6px_18px_rgba(243,131,30,0.28)] hover:shadow-[0_8px_22px_rgba(243,131,30,0.36)] transition-all duration-200"
                                 >
                                     Mulai Dampingi Anak
@@ -434,14 +434,14 @@ const LandingPage = () => {
                             </h4>
                             <div className="flex flex-col items-start gap-2.5">
                                 <Link
-                                    href="/login"
+                                    href={route('login')}
                                     className="bg-white hover:bg-slate-100 text-[#2E5780] text-[12.5px] font-bold px-4 py-2 rounded-full inline-flex items-center gap-1.5 transition-colors shadow-sm"
                                 >
                                     <span>Masuk ke akun</span>
                                     <ArrowRight className="w-3.5 h-3.5" />
                                 </Link>
                                 <Link
-                                    href="/register"
+                                    href={route('register')}
                                     className="text-[12.5px] text-white/85 hover:text-white transition-colors pl-1"
                                 >
                                     Daftar orang tua
