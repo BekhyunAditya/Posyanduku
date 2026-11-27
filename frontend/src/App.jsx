@@ -29,6 +29,9 @@ import DataBalita from './pages/kader/DataBalita';
 import DetailBalita from './pages/kader/DetailBalita';
 import CatatPengukuran from './pages/kader/CatatPengukuran';
 import PelayananVerifikasi from './pages/kader/PelayananVerifikasi';
+import JadwalKegiatan from './pages/kader/JadwalKegiatan';
+import TambahKegiatan from './pages/kader/TambahKegiatan';
+import HasilKunjungan from './pages/kader/HasilKunjungan';
 
 function App() {
   return (
@@ -65,6 +68,9 @@ function App() {
         <Route path="/kader/data-balita/:slug" element={<DetailBalita />} />
         <Route path="/kader/pengukuran" element={<CatatPengukuran />} />
         <Route path="/kader/pelayanan" element={<PelayananVerifikasi />} />
+        <Route path="/kader/jadwal-kegiatan" element={<JadwalKegiatan />} />
+        <Route path="/kader/jadwal-kegiatan/tambah" element={<TambahKegiatan />} />
+        <Route path="/kader/jadwal-kegiatan/kunjungan" element={<HasilKunjungan />} />
       </Routes>
     </Router>
   );
