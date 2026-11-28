@@ -3,6 +3,8 @@
 use App\Http\Controllers\Kader\ChildManagementController;
 use App\Http\Controllers\Kader\ImmunizationController;
 use App\Http\Controllers\Kader\MeasurementController;
+use App\Http\Controllers\Kader\ScheduleController;
+use App\Http\Controllers\Kader\VisitController;
 use Illuminate\Support\Facades\Route;
 
 // ========================================
@@ -38,5 +40,20 @@ Route::middleware(['auth', 'role:kader', 'verified.kader'])
             ->scopeBindings()
             ->name('immunizations.destroy');
 
-        Route::inertia('/jadwal-kegiatan', 'Kader/KelolaJadwal')->name('schedules.index');
+        // Kunjungan, Pelayanan & Tindak Lanjut (#22, #38)
+        Route::get('/pelayanan', [VisitController::class, 'index'])->name('visits.index');
+        Route::get('/tindak-lanjut', [VisitController::class, 'followUps'])->name('follow-ups.index');
+        Route::post('/balita/{child}/kunjungan', [VisitController::class, 'store'])->name('visits.store');
+        Route::put('/balita/{child}/kunjungan/{visit}', [VisitController::class, 'update'])
+            ->scopeBindings()
+            ->name('visits.update');
+        Route::delete('/balita/{child}/kunjungan/{visit}', [VisitController::class, 'destroy'])
+            ->scopeBindings()
+            ->name('visits.destroy');
+
+        // Kelola Jadwal Kegiatan Posyandu (#20)
+        Route::get('/jadwal-kegiatan', [ScheduleController::class, 'index'])->name('schedules.index');
+        Route::post('/jadwal-kegiatan', [ScheduleController::class, 'store'])->name('schedules.store');
+        Route::put('/jadwal-kegiatan/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
+        Route::delete('/jadwal-kegiatan/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
     });
