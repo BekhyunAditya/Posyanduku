@@ -15,6 +15,18 @@ Thumbs.db
 /.zed
 _ide_helper.php
 
+# AI / Agent & MCP Configuration
+/.claude/
+/.ai/
+/.gemini/
+/.windsurf/
+/.kiro/
+/.qoder/
+/.opencode/
+/boost.json
+/.mcp.json
+/CLAUDE.local.md
+
 # Laravel 4 specific
 bootstrap/compiled.php
 app/storage/
