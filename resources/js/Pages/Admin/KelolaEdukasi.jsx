@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Head, router } from '@inertiajs/react';
-import { ChevronDown, ArrowRight, Plus, X } from 'lucide-react';
+import { ChevronDown, ArrowRight } from 'lucide-react';
 import SidebarAdmin from '../../Components/layout/SidebarAdmin';
 
 export const ARTIKEL_STORAGE_KEY = 'posyanduku_admin_articles';
 export const KATEGORI_STORAGE_KEY = 'posyanduku_admin_categories';
 
 export const INITIAL_CATEGORIES = [
-    'Panduan kunjungan',
+    'ASI',
     'MPASI',
-    'Imunisasi',
     'Gizi terjangkau',
+    'Imunisasi',
+    'Pertumbuhan',
+    'Panduan kunjungan',
 ];
 
 export const INITIAL_ARTICLES = [
@@ -80,10 +82,6 @@ const KelolaEdukasi = () => {
     const [selectedMonth, setSelectedMonth] = useState('November 2026');
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [articles, setArticles] = useState(INITIAL_ARTICLES);
-    const [categories, setCategories] = useState(INITIAL_CATEGORIES);
-    const [showCategoryPanel, setShowCategoryPanel] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState('Semua');
-    const [newCategoryName, setNewCategoryName] = useState('');
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -100,22 +98,8 @@ const KelolaEdukasi = () => {
                     JSON.stringify(INITIAL_ARTICLES)
                 );
             }
-
-            const savedCats = localStorage.getItem(KATEGORI_STORAGE_KEY);
-            if (savedCats) {
-                const parsedCats = JSON.parse(savedCats);
-                if (Array.isArray(parsedCats) && parsedCats.length > 0) {
-                    setCategories(parsedCats);
-                }
-            } else {
-                localStorage.setItem(
-                    KATEGORI_STORAGE_KEY,
-                    JSON.stringify(INITIAL_CATEGORIES)
-                );
-            }
         } catch {
             setArticles(INITIAL_ARTICLES);
-            setCategories(INITIAL_CATEGORIES);
         }
     }, []);
 
@@ -128,38 +112,6 @@ const KelolaEdukasi = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
-
-    const handleAddCategory = (e) => {
-        e.preventDefault();
-        const trimmed = newCategoryName.trim();
-        if (!trimmed) return;
-        if (
-            categories.some(
-                (cat) => cat.toLowerCase() === trimmed.toLowerCase()
-            )
-        ) {
-            setNewCategoryName('');
-            return;
-        }
-        const updated = [...categories, trimmed];
-        setCategories(updated);
-        localStorage.setItem(KATEGORI_STORAGE_KEY, JSON.stringify(updated));
-        setNewCategoryName('');
-    };
-
-    const handleRemoveCategory = (catToRemove) => {
-        const updated = categories.filter((c) => c !== catToRemove);
-        setCategories(updated);
-        localStorage.setItem(KATEGORI_STORAGE_KEY, JSON.stringify(updated));
-        if (selectedCategory === catToRemove) {
-            setSelectedCategory('Semua');
-        }
-    };
-
-    const filteredArticles =
-        selectedCategory === 'Semua'
-            ? articles
-            : articles.filter((a) => a.kategori === selectedCategory);
 
     return (
         <div className="min-h-screen bg-[#F7F5F0] text-[#1E293B] font-['Plus_Jakarta_Sans',sans-serif] flex flex-col lg:flex-row">
@@ -221,135 +173,30 @@ const KelolaEdukasi = () => {
                     </p>
                 </header>
 
-                {/* Tombol Aksi */}
+                {/* Tombol Pill Navigasi (Kelola Kategori & + Tulis artikel) */}
                 <div className="flex flex-wrap items-center gap-3 mb-6">
                     <button
                         type="button"
-                        onClick={() => router.visit('/admin/edukasi/tulis')}
-                        className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#2E5780] hover:bg-[#234466] text-white text-[13px] font-semibold transition-colors cursor-pointer shadow-2xs"
+                        onClick={() => router.visit('/admin/kategori-edukasi')}
+                        className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-white hover:bg-slate-50 text-[#1D3B58] text-[13px] font-semibold transition-colors cursor-pointer shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-slate-200/70"
                     >
-                        + Tulis artikel
+                        Kelola Kategori
                     </button>
 
                     <button
                         type="button"
-                        onClick={() => setShowCategoryPanel((prev) => !prev)}
-                        className={`inline-flex items-center justify-center px-6 py-2.5 rounded-full text-[13px] font-semibold transition-colors cursor-pointer ${
-                            showCategoryPanel
-                                ? 'bg-[#B5D5F0] text-[#1D3B58]'
-                                : 'bg-white hover:bg-slate-50 text-[#1D3B58] shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-slate-200/70'
-                        }`}
+                        onClick={() => router.visit('/admin/edukasi/tulis')}
+                        className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-white hover:bg-slate-50 text-[#1D3B58] text-[13px] font-semibold transition-colors cursor-pointer shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-slate-200/70"
                     >
-                        Kelola Kategori
+                        + Tulis artikel
                     </button>
                 </div>
 
-                {/* Panel Inline Kelola & Filter Kategori (Muncul saat tombol Kelola Kategori diklik) */}
-                {showCategoryPanel && (
-                    <section className="bg-white rounded-[20px] p-5 mb-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-[#B5D5F0]">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                            <div>
-                                <h2 className="text-[15px] font-bold text-[#1E293B]">
-                                    Kategori Edukasi
-                                </h2>
-                                <p className="text-xs text-[#64748B]">
-                                    Pilih kategori untuk menyaring artikel atau
-                                    tambahkan kategori baru.
-                                </p>
-                            </div>
-
-                            <form
-                                onSubmit={handleAddCategory}
-                                className="flex items-center gap-2"
-                            >
-                                <input
-                                    type="text"
-                                    value={newCategoryName}
-                                    onChange={(e) =>
-                                        setNewCategoryName(e.target.value)
-                                    }
-                                    placeholder="Nama kategori baru..."
-                                    className="rounded-full border border-[#2E5780]/50 px-3.5 py-1.5 text-xs text-[#1E293B] focus:outline-none focus:border-[#2E5780]"
-                                />
-                                <button
-                                    type="submit"
-                                    className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-[#2E5780] hover:bg-[#234466] text-white text-xs font-semibold cursor-pointer"
-                                >
-                                    <Plus className="w-3.5 h-3.5" />
-                                    <span>Tambah</span>
-                                </button>
-                            </form>
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-2">
-                            <button
-                                type="button"
-                                onClick={() => setSelectedCategory('Semua')}
-                                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
-                                    selectedCategory === 'Semua'
-                                        ? 'bg-[#2E5780] text-white'
-                                        : 'bg-[#F7F5F0] text-[#334155] hover:bg-[#E3EEF8]'
-                                }`}
-                            >
-                                Semua ({articles.length})
-                            </button>
-
-                            {categories.map((cat) => {
-                                const count = articles.filter(
-                                    (a) => a.kategori === cat
-                                ).length;
-                                const active = selectedCategory === cat;
-                                return (
-                                    <div
-                                        key={cat}
-                                        className={`inline-flex items-center gap-1.5 pl-3.5 pr-2 py-1.5 rounded-full text-xs font-semibold transition-colors ${
-                                            active
-                                                ? 'bg-[#2E5780] text-white'
-                                                : 'bg-[#E3EEF8] text-[#1D3B58]'
-                                        }`}
-                                    >
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                setSelectedCategory(cat)
-                                            }
-                                            className="cursor-pointer"
-                                        >
-                                            {cat} ({count})
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                handleRemoveCategory(cat)
-                                            }
-                                            title={`Hapus kategori ${cat}`}
-                                            className={`p-0.5 rounded-full cursor-pointer ${
-                                                active
-                                                    ? 'hover:bg-white/20 text-white'
-                                                    : 'hover:bg-[#2E5780]/15 text-[#1D3B58]'
-                                            }`}
-                                        >
-                                            <X className="w-3 h-3" />
-                                        </button>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </section>
-                )}
-
                 {/* Kartu Tabel Konten Edukasi */}
                 <section className="bg-white rounded-[24px] p-5 sm:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-[18px] font-bold text-[#1E293B]">
-                            Konten edukasi
-                        </h2>
-                        {selectedCategory !== 'Semua' && (
-                            <span className="text-xs font-medium text-[#2E5780] bg-[#E3EEF8] px-3 py-1 rounded-full">
-                                Kategori: {selectedCategory}
-                            </span>
-                        )}
-                    </div>
+                    <h2 className="text-[18px] font-bold text-[#1E293B] mb-4">
+                        Konten edukasi
+                    </h2>
 
                     <div className="overflow-x-auto">
                         <table className="w-full min-w-[680px] border-collapse text-left">
@@ -367,7 +214,7 @@ const KelolaEdukasi = () => {
                                 </tr>
                             </thead>
                             <tbody className="text-[13px] text-[#334155]">
-                                {filteredArticles.map((article) => (
+                                {articles.map((article) => (
                                     <tr
                                         key={article.id}
                                         className="border-b border-[#7B9EC0]/60 hover:bg-[#F8FAFC] transition-colors"

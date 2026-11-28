@@ -257,22 +257,22 @@ const FormArtikel = ({ slug = null }) => {
                     </p>
                 </header>
 
-                {/* Tombol Pill Atas */}
+                {/* Tombol Pill Atas: Kelola Kategori (Putih) & + Tulis artikel (Aktif Biru Tua) */}
                 <div className="flex flex-wrap items-center gap-3 mb-6">
                     <button
                         type="button"
-                        onClick={() => router.visit('/admin/edukasi/tulis')}
-                        className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-white hover:bg-slate-50 text-[#1D3B58] text-[13px] font-semibold transition-colors cursor-pointer shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-slate-200/70"
+                        onClick={() => router.visit('/admin/kategori-edukasi')}
+                        className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-white hover:bg-slate-50 text-[#1D3B58] text-[13px] font-semibold transition-colors cursor-pointer shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-slate-200/70"
                     >
-                        + Tulis artikel
+                        Kelola Kategori
                     </button>
 
                     <button
                         type="button"
-                        onClick={() => router.visit('/admin/edukasi')}
-                        className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-[#2E5780] hover:bg-[#234466] text-white text-[13px] font-semibold transition-colors cursor-pointer shadow-2xs"
+                        onClick={() => router.visit('/admin/edukasi/tulis')}
+                        className="inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#2E5780] hover:bg-[#234466] text-white text-[13px] font-semibold transition-colors cursor-pointer shadow-2xs"
                     >
-                        Kelola Kategori
+                        + Tulis artikel
                     </button>
                 </div>
 

@@ -81,6 +81,10 @@ Route::prefix('admin')->group(function () {
     Route::get('/edukasi/tulis', fn () => Inertia::render('Admin/FormArtikel'))->name('admin.edukasi.create');
     Route::get('/edukasi/sunting/{slug}', fn ($slug) => Inertia::render('Admin/FormArtikel', ['slug' => $slug]))->name('admin.edukasi.edit');
     Route::get('/edukasi/konfirmasi/{slug}', fn ($slug) => Inertia::render('Admin/KonfirmasiArtikel', ['slug' => $slug]))->name('admin.edukasi.konfirmasi');
+    Route::get('/kategori-edukasi', fn () => Inertia::render('Admin/KategoriEdukasi'))->name('admin.kategori');
+    Route::get('/kategori-edukasi/konfirmasi', fn () => Inertia::render('Admin/KonfirmasiKategoriEdukasi'))->name('admin.kategori.konfirmasi');
+    Route::get('/pengaturan', fn () => Inertia::render('Admin/PengaturanSistem'))->name('admin.pengaturan');
+    Route::get('/pengaturan/konfirmasi', fn () => Inertia::render('Admin/KonfirmasiPengaturan'))->name('admin.pengaturan.konfirmasi');
 });
 
 require __DIR__ . '/auth.php';
