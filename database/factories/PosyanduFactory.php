@@ -16,8 +16,8 @@ class PosyanduFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'Posyandu '.fake()->unique()->randomElement(['Melati', 'Mawar', 'Kenanga', 'Dahlia', 'Anggrek', 'Flamboyan']).' '.fake()->numberBetween(1, 9),
-            'code' => 'POS-'.fake()->unique()->numerify('###'),
+            'name' => 'Posyandu '.fake()->randomElement(['Melati', 'Mawar', 'Kenanga', 'Dahlia', 'Anggrek', 'Flamboyan']).' '.fake()->numberBetween(1, 99),
+            'code' => 'POS-'.fake()->unique()->numerify('#####'),
             'address' => fake()->streetAddress(),
             'rt' => str_pad((string) fake()->numberBetween(1, 12), 2, '0', STR_PAD_LEFT),
             'rw' => str_pad((string) fake()->numberBetween(1, 8), 2, '0', STR_PAD_LEFT),

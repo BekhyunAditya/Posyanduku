@@ -4,6 +4,8 @@ use App\Http\Controllers\Ortu\ChildController;
 use App\Http\Controllers\Ortu\ConsultationNoteController;
 use App\Http\Controllers\Ortu\GrowthController;
 use App\Http\Controllers\Ortu\ImmunizationController;
+use App\Http\Controllers\Ortu\ScheduleController;
+use App\Http\Controllers\Ortu\VisitGuideController;
 use Illuminate\Support\Facades\Route;
 
 // ========================================
@@ -19,7 +21,10 @@ Route::middleware(['auth', 'role:orang_tua'])
         Route::get('/pertumbuhan', [GrowthController::class, 'index'])->name('growth.index');
 
         Route::inertia('/buku-kia', 'OrangTua/BukuKiaDigital')->name('buku-kia.show');
-        Route::inertia('/panduan-kunjungan', 'OrangTua/PanduanKunjungan')->name('visit-guide.index');
+
+        // Panduan Kunjungan & Checklist Kesiapan Posyandu (#25, #38)
+        Route::get('/panduan-kunjungan', [VisitGuideController::class, 'index'])->name('visit-guide.index');
+        Route::post('/checklist', [VisitGuideController::class, 'toggleChecklist'])->name('checklist.toggle');
 
         // Catatan Konsultasi (#11)
         Route::get('/panduan-kunjungan/catatan', [ConsultationNoteController::class, 'create'])->name('consultation-notes.create');
@@ -29,7 +34,9 @@ Route::middleware(['auth', 'role:orang_tua'])
         Route::delete('/panduan-kunjungan/catatan/{consultationNote}', [ConsultationNoteController::class, 'destroy'])->name('consultation-notes.destroy');
         Route::get('/panduan-tindakan', [ConsultationNoteController::class, 'create'])->name('action-guide.show');
 
-        Route::inertia('/jadwal-posyandu', 'OrangTua/KalenderPosyandu')->name('schedules.index');
+        // Kalender Kegiatan Posyandu & Tindak Lanjut (#21, #38)
+        Route::get('/jadwal-posyandu', [ScheduleController::class, 'index'])->name('schedules.index');
+
         Route::inertia('/pengingat', 'OrangTua/NotifikasiPengingat')->name('notifications.index');
 
         // CRUD Profil Anak (#11)
