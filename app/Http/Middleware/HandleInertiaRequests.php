@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Child;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -29,11 +30,32 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
             ],
+            'flash' => [
+                'status' => fn (): ?string => $request->session()->get('status'),
+            ],
+            'unreadNotificationsCount' => fn (): int => $user !== null
+                ? $user->unreadNotifications()->count()
+                : 0,
+            'navChildren' => fn (): array => ($user !== null && $user->isOrangTua())
+                ? $user->children()
+                    ->active()
+                    ->orderBy('name')
+                    ->get(['id', 'name', 'nickname', 'birth_date'])
+                    ->map(fn (Child $child): array => [
+                        'id' => $child->id,
+                        'name' => $child->name,
+                        'nickname' => $child->nickname,
+                        'age_label' => $child->ageLabel(),
+                    ])
+                    ->all()
+                : [],
         ];
     }
 }
