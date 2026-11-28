@@ -3,6 +3,7 @@
 use App\Http\Controllers\Ortu\ChildController;
 use App\Http\Controllers\Ortu\ConsultationNoteController;
 use App\Http\Controllers\Ortu\GrowthController;
+use App\Http\Controllers\Ortu\ImmunizationController;
 use Illuminate\Support\Facades\Route;
 
 // ========================================
@@ -39,5 +40,6 @@ Route::middleware(['auth', 'role:orang_tua'])
         Route::put('/profil-anak/{child}', [ChildController::class, 'update'])->name('children.update');
         Route::delete('/profil-anak/{child}', [ChildController::class, 'destroy'])->name('children.destroy');
 
-        Route::inertia('/imunisasi', 'OrangTua/JadwalImunisasi')->name('immunizations.index');
+        // Jadwal & Riwayat Imunisasi (#18)
+        Route::get('/imunisasi', [ImmunizationController::class, 'index'])->name('immunizations.index');
     });
