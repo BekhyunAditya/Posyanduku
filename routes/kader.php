@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Kader\ChildManagementController;
+use App\Http\Controllers\Kader\ImmunizationController;
 use App\Http\Controllers\Kader\MeasurementController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,15 @@ Route::middleware(['auth', 'role:kader', 'verified.kader'])
         Route::delete('/balita/{child}/pengukuran/{growthMeasurement}', [MeasurementController::class, 'destroy'])
             ->scopeBindings()
             ->name('measurements.destroy');
+
+        // Pencatatan & Riwayat Imunisasi (#19)
+        Route::post('/balita/{child}/imunisasi', [ImmunizationController::class, 'store'])->name('immunizations.store');
+        Route::put('/balita/{child}/imunisasi/{immunization}', [ImmunizationController::class, 'update'])
+            ->scopeBindings()
+            ->name('immunizations.update');
+        Route::delete('/balita/{child}/imunisasi/{immunization}', [ImmunizationController::class, 'destroy'])
+            ->scopeBindings()
+            ->name('immunizations.destroy');
 
         Route::inertia('/jadwal-kegiatan', 'Kader/KelolaJadwal')->name('schedules.index');
     });
