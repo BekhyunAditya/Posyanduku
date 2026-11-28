@@ -1,25 +1,28 @@
-
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Inertia\Response;
 
-// Halaman utama
-Route::get('/', fn() => Inertia::render('LandingPage'));
+// ========================================
+// HALAMAN PUBLIK
+// ========================================
+Route::inertia('/', 'LandingPage')->name('home');
+Route::inertia('/edukasi', 'OrangTua/EdukasiArtikel')->name('edukasi.index');
+Route::get('/edukasi/{slug}', fn (string $slug): Response => Inertia::render('OrangTua/DetailEdukasi', [
+    'slug' => $slug,
+]))->name('edukasi.show');
 
-Route::get('/edukasi', fn() => Inertia::render('OrangTua/EdukasiArtikel'));
-Route::get('/edukasi/{slug}', fn(string $slug) => Inertia::render('OrangTua/DetailEdukasi', ['slug' => $slug]));
-
-// Dashboard bawaan Laravel
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+// Pengalihan dashboard sesuai peran pengguna
+Route::get('/dashboard', function (Request $request): RedirectResponse {
+    return redirect()->route($request->user()->dashboardRoute());
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Profil pengguna bawaan Laravel
-Route::middleware('auth')->group(function () {
+// Profil pengguna terautentikasi
+Route::middleware('auth')->group(function (): void {
     Route::get('/profil', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profil', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profil', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -28,73 +31,53 @@ Route::middleware('auth')->group(function () {
 // ========================================
 // HALAMAN ORANG TUA
 // ========================================
-
-Route::prefix('ortu')->group(function () {
-    // Dashboard
-    Route::get('/dashboard', fn() => Inertia::render('OrangTua/DashboardOrtu'));
-
-    // Pertumbuhan anak
-    Route::get('/pertumbuhan', fn() => Inertia::render('OrangTua/PantauPertumbuhan'));
-
-    // Buku KIA
-    Route::get('/buku-kia', fn() => Inertia::render('OrangTua/BukuKiaDigital'));
-
-    // Panduan kunjungan
-    Route::get('/panduan-kunjungan', fn() => Inertia::render('OrangTua/PanduanKunjungan'));
-
-    // Form catatan konsultasi
-    Route::get('/panduan-kunjungan/catatan', fn() => Inertia::render('OrangTua/CatatanKonsultasi'));
-
-    // Menyimpan catatan konsultasi ke session
-    Route::post('/panduan-kunjungan/catatan-tersimpan', function (Request $request) {
-        $request->session()->flash('savedNote', $request->all());
-
-        return redirect('/ortu/panduan-kunjungan/catatan-tersimpan');
+Route::middleware(['auth', 'role:orang_tua'])
+    ->prefix('ortu')
+    ->name('ortu.')
+    ->group(function (): void {
+        Route::inertia('/dashboard', 'OrangTua/DashboardOrtu')->name('dashboard');
+        Route::inertia('/pertumbuhan', 'OrangTua/PantauPertumbuhan')->name('growth.index');
+        Route::inertia('/buku-kia', 'OrangTua/BukuKiaDigital')->name('buku-kia.show');
+        Route::inertia('/panduan-kunjungan', 'OrangTua/PanduanKunjungan')->name('visit-guide.index');
+        Route::inertia('/panduan-kunjungan/catatan', 'OrangTua/CatatanKonsultasi')->name('consultation-notes.create');
+        Route::inertia('/panduan-kunjungan/catatan-tersimpan', 'OrangTua/CatatanTersimpan')->name('consultation-notes.saved');
+        Route::inertia('/panduan-tindakan', 'OrangTua/CatatanKonsultasi')->name('action-guide.show');
+        Route::inertia('/jadwal-posyandu', 'OrangTua/KalenderPosyandu')->name('schedules.index');
+        Route::inertia('/pengingat', 'OrangTua/NotifikasiPengingat')->name('notifications.index');
+        Route::inertia('/profil-anak', 'OrangTua/ProfilAnak')->name('children.index');
+        Route::inertia('/tambah-anak', 'OrangTua/TambahProfilAnak')->name('children.create');
+        Route::inertia('/profil-anak/konfirmasi', 'OrangTua/KonfirmasiPenyimpanan')->name('children.confirm');
+        Route::inertia('/imunisasi', 'OrangTua/JadwalImunisasi')->name('immunizations.index');
     });
 
-    // Halaman catatan tersimpan
-    Route::get('/panduan-kunjungan/catatan-tersimpan', function () {
-        return Inertia::render('OrangTua/CatatanTersimpan', [
-            'savedNote' => session('savedNote'),
-        ]);
+// ========================================
+// HALAMAN KADER POSYANDU
+// ========================================
+Route::middleware(['auth', 'role:kader', 'verified.kader'])
+    ->prefix('kader')
+    ->name('kader.')
+    ->group(function (): void {
+        Route::inertia('/dashboard', 'Kader/DashboardKader')->name('dashboard');
+        Route::inertia('/data-balita', 'Kader/DataBalita')->name('children.index');
+        Route::inertia('/daftar-balita', 'Kader/DaftarBalita')->name('children.list');
+        Route::get('/balita/{child}', fn (string $child): Response => Inertia::render('Kader/DetailBalitaKader', [
+            'childId' => $child,
+        ]))->name('children.show');
+        Route::inertia('/jadwal-kegiatan', 'Kader/KelolaJadwal')->name('schedules.index');
     });
 
-    // Alias panduan tindakan
-    Route::get('/panduan-tindakan', fn() => Inertia::render('OrangTua/CatatanKonsultasi'));
-
-    // Jadwal Posyandu
-    Route::get('/jadwal-posyandu', fn() => Inertia::render('OrangTua/KalenderPosyandu'));
-
-    // Pengingat
-    Route::get('/pengingat', fn() => Inertia::render('OrangTua/NotifikasiPengingat'));
-
-    // Profil anak
-    Route::get('/profil-anak', fn() => Inertia::render('OrangTua/ProfilAnak'));
-
-    // Tambah profil anak
-    Route::get('/tambah-anak', fn() => Inertia::render('OrangTua/TambahProfilAnak'));
-
-    // Menerima data profil anak dari form edit atau tambah
-    Route::post('/profil-anak/konfirmasi', function (Request $request) {
-        $request->session()->flash('savedChild', $request->all());
-
-        return redirect('/ortu/profil-anak/konfirmasi');
+// ========================================
+// HALAMAN ADMIN
+// ========================================
+Route::middleware(['auth', 'role:admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function (): void {
+        Route::inertia('/dashboard', 'Admin/DashboardAdmin')->name('dashboard');
+        Route::inertia('/pengguna', 'Admin/KelolaPengguna')->name('users.index');
+        Route::inertia('/posyandu', 'Admin/KelolaPosyandu')->name('posyandus.index');
+        Route::inertia('/edukasi', 'Admin/KelolaEdukasi')->name('education.index');
+        Route::inertia('/pengaturan', 'Admin/PengaturanSistem')->name('settings.index');
     });
 
-    // Halaman konfirmasi profil anak
-    Route::get('/profil-anak/konfirmasi', function () {
-        return Inertia::render('OrangTua/KonfirmasiPenyimpanan', [
-            'savedChild' => session('savedChild'),
-        ]);
-    });
-
-    // Imunisasi
-    Route::get('/imunisasi', fn() => Inertia::render('OrangTua/JadwalImunisasi'));
-});
-
-
-Route::prefix('kader')->group(function () {
-    Route::get('/dashboard', fn() => Inertia::render('Kader/DashboardKader'));
-    Route::get('/data-balita', fn() => Inertia::render('Kader/DataBalita'));
-});
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
