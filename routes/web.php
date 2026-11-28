@@ -73,6 +73,10 @@ Route::prefix('admin')->group(function () {
     Route::get('/akun/aturan-peran', fn () => Inertia::render('Admin/AturanPeran'))->name('admin.akun.aturan');
     Route::get('/akun/tambah', fn () => Inertia::render('Admin/TambahAkunKader'))->name('admin.akun.tambah');
     Route::get('/akun/konfirmasi', fn () => Inertia::render('Admin/KonfirmasiAkunKader'))->name('admin.akun.konfirmasi');
+    Route::get('/posyandu', fn () => Inertia::render('Admin/KelolaPosyandu'))->name('admin.posyandu');
+    Route::get('/posyandu/form', fn () => Inertia::render('Admin/FormPosyandu'))->name('admin.posyandu.create');
+    Route::get('/posyandu/ubah/{slug}', fn ($slug) => Inertia::render('Admin/FormPosyandu', ['slug' => $slug]))->name('admin.posyandu.edit');
+    Route::get('/posyandu/konfirmasi', fn () => Inertia::render('Admin/KonfirmasiPosyandu'))->name('admin.posyandu.konfirmasi');
 });
 
 require __DIR__ . '/auth.php';
