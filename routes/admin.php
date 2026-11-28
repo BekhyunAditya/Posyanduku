@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EducationArticleController;
 use App\Http\Controllers\Admin\EducationCategoryController;
 use App\Http\Controllers\Admin\PosyanduController;
@@ -14,7 +15,7 @@ Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function (): void {
-        Route::inertia('/dashboard', 'Admin/DashboardAdmin')->name('dashboard');
+        Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
         // Kelola Pengguna & Verifikasi Kader (#28)
         Route::get('/pengguna', [UserManagementController::class, 'index'])->name('users.index');

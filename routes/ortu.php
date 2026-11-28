@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Ortu\ChildController;
 use App\Http\Controllers\Ortu\ConsultationNoteController;
+use App\Http\Controllers\Ortu\DashboardController;
 use App\Http\Controllers\Ortu\GrowthController;
 use App\Http\Controllers\Ortu\ImmunizationController;
 use App\Http\Controllers\Ortu\ScheduleController;
@@ -15,7 +16,7 @@ Route::middleware(['auth', 'role:orang_tua'])
     ->prefix('ortu')
     ->name('ortu.')
     ->group(function (): void {
-        Route::inertia('/dashboard', 'OrangTua/DashboardOrtu')->name('dashboard');
+        Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
         // Pantau Pertumbuhan & Grafik WHO (#16, #17)
         Route::get('/pertumbuhan', [GrowthController::class, 'index'])->name('growth.index');

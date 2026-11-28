@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Kader\ChildManagementController;
+use App\Http\Controllers\Kader\DashboardController;
 use App\Http\Controllers\Kader\ImmunizationController;
 use App\Http\Controllers\Kader\MeasurementController;
 use App\Http\Controllers\Kader\ScheduleController;
@@ -14,7 +15,7 @@ Route::middleware(['auth', 'role:kader', 'verified.kader'])
     ->prefix('kader')
     ->name('kader.')
     ->group(function (): void {
-        Route::inertia('/dashboard', 'Kader/DashboardKader')->name('dashboard');
+        Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
         // Daftar & Detail Balita Binaan (#13)
         Route::get('/data-balita', [ChildManagementController::class, 'index'])->name('children.index');
