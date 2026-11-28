@@ -1,8 +1,14 @@
 <?php
 
+use App\Models\EducationArticle;
 use App\Models\User;
 
 it('allows guests to access public pages', function (string $uri) {
+    EducationArticle::factory()->create([
+        'slug' => 'panduan-asi-eksklusif',
+        'is_published' => true,
+    ]);
+
     $this->get($uri)->assertOk();
 })->with([
     'landing page' => ['/'],

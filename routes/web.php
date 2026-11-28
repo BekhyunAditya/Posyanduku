@@ -1,20 +1,17 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Public\EducationController;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-use Inertia\Response;
 
 // ========================================
 // HALAMAN PUBLIK
 // ========================================
 Route::inertia('/', 'LandingPage')->name('home');
-Route::inertia('/edukasi', 'OrangTua/EdukasiArtikel')->name('edukasi.index');
-Route::get('/edukasi/{slug}', fn (string $slug): Response => Inertia::render('OrangTua/DetailEdukasi', [
-    'slug' => $slug,
-]))->name('edukasi.show');
+Route::get('/edukasi', [EducationController::class, 'index'])->name('edukasi.index');
+Route::get('/edukasi/{slug}', [EducationController::class, 'show'])->name('edukasi.show');
 
 // Pengalihan dashboard sesuai peran pengguna
 Route::get('/dashboard', function (Request $request): RedirectResponse {
