@@ -1,7 +1,9 @@
 import React, { useMemo, useState } from 'react';
-import { router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { ChevronDown, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import SidebarKader from '../../Components/layout/SidebarKader';
+
+export const BALITA_STORAGE_KEY = 'posyanduku_kader_balita_binaan';
 
 const INITIAL_DATA_BALITA = (() => {
   const firstPage = [
@@ -81,7 +83,7 @@ const INITIAL_DATA_BALITA = (() => {
 
   // Susun total 128 balita (62 Laki-laki & 66 Perempuan)
   const extraRows = Array.from({ length: 120 }, (_, idx) => {
-    const isLaki = idx < 58; // 4 dari firstPage + 58 = 62 Laki-laki; sisanya 62 + 4 = 66 Perempuan
+    const isLaki = idx < 58;
     const usiaBulan = ((idx * 3) % 54) + 6;
     return {
       id: idx + 9,
@@ -104,7 +106,7 @@ const USIA_OPTIONS = [
   '25 - 60 bulan',
 ];
 
-const GENDER_OPTIONS = ['Semua jenis kelamin', 'Laki-laki', 'Perempuan'];
+const GENDER_OPTIONS = ['Jenis kelamin', 'Laki-laki', 'Perempuan'];
 
 const ITEMS_PER_PAGE = 8;
 
@@ -118,24 +120,36 @@ const toSlug = (nama) =>
 const DataBalita = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUsia, setSelectedUsia] = useState('Semua usia');
-  const [selectedGender, setSelectedGender] = useState('Semua jenis kelamin');
+  const [selectedGender, setSelectedGender] = useState('Jenis kelamin');
   const [openDropdown, setOpenDropdown] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalBalita = INITIAL_DATA_BALITA.length;
+  const allBalita = useMemo(() => {
+    try {
+      const saved = JSON.parse(
+        localStorage.getItem(BALITA_STORAGE_KEY) || '[]'
+      );
+      if (Array.isArray(saved) && saved.length > 0) {
+        return [...saved, ...INITIAL_DATA_BALITA];
+      }
+    } catch {
+      // Gunakan data default jika localStorage tidak tersedia
+    }
+    return INITIAL_DATA_BALITA;
+  }, []);
+
+  const totalBalita = allBalita.length;
   const totalLaki = useMemo(
-    () =>
-      INITIAL_DATA_BALITA.filter((b) => b.jenisKelamin === 'Laki-laki').length,
-    []
+    () => allBalita.filter((b) => b.jenisKelamin === 'Laki-laki').length,
+    [allBalita]
   );
   const totalPerempuan = useMemo(
-    () =>
-      INITIAL_DATA_BALITA.filter((b) => b.jenisKelamin === 'Perempuan').length,
-    []
+    () => allBalita.filter((b) => b.jenisKelamin === 'Perempuan').length,
+    [allBalita]
   );
 
   const filteredData = useMemo(() => {
-    return INITIAL_DATA_BALITA.filter((item) => {
+    return allBalita.filter((item) => {
       const matchSearch =
         item.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.wali.toLowerCase().includes(searchQuery.toLowerCase());
@@ -150,12 +164,12 @@ const DataBalita = () => {
       }
 
       const matchGender =
-        selectedGender === 'Semua jenis kelamin' ||
+        selectedGender === 'Jenis kelamin' ||
         item.jenisKelamin === selectedGender;
 
       return matchSearch && matchUsia && matchGender;
     });
-  }, [searchQuery, selectedUsia, selectedGender]);
+  }, [allBalita, searchQuery, selectedUsia, selectedGender]);
 
   const totalPages = Math.max(
     1,
@@ -193,17 +207,23 @@ const DataBalita = () => {
       <SidebarKader />
 
       <main className="flex-1 px-5 sm:px-8 lg:px-10 py-6 lg:py-8 max-w-[1200px]">
+        {/* Breadcrumb */}
         <p className="text-[12.5px] font-medium text-[#334155]">
           Kader/Data balita
         </p>
 
-        <div className="mt-3">
+        {/* Header Halaman & Tombol Tambah Balita */}
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
           <h1 className="text-[30px] sm:text-[36px] font-extrabold text-[#1D3B58] tracking-tight leading-tight">
-            Data balita
+            Data balita binaan
           </h1>
-          <p className="mt-1 text-[14px] text-[#475569]">
-            Daftar anak binaan Posyandu Melati 01
-          </p>
+
+          <Link
+            href="/kader/data-balita/tambah"
+            className="bg-[#2E5780] hover:bg-[#234466] text-white text-[14px] font-bold px-7 py-2.5 rounded-full shadow-xs transition-colors duration-200"
+          >
+            Tambah Balita
+          </Link>
         </div>
 
         {/* 3 Kartu Statistik */}
@@ -236,104 +256,111 @@ const DataBalita = () => {
           </div>
         </section>
 
-        {/* Kartu Daftar Balita */}
-        <section className="mt-6 bg-white rounded-[24px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
-          {/* Pencarian & Filter */}
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 mb-5">
-            <div className="relative flex-1 max-w-md">
-              <Search className="w-4 h-4 text-[#64748B] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setCurrentPage(1);
-                }}
-                placeholder="Cari nama anak atau wali..."
-                className="w-full bg-[#F8FAFC] border border-slate-300/80 focus:border-[#2E5780] focus:bg-white focus:outline-none rounded-full pl-10 pr-4 py-2 text-[13.5px] text-[#1E293B] placeholder:text-slate-400 transition-colors"
-              />
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2.5">
-              {/* Filter Usia */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setOpenDropdown((prev) => (prev === 'usia' ? null : 'usia'))
-                  }
-                  className="bg-white border border-slate-300/90 hover:border-[#2E5780]/60 rounded-full px-4 py-2 text-[13.5px] font-semibold text-[#1E293B] inline-flex items-center gap-2.5 transition-colors cursor-pointer"
-                >
-                  <span>{selectedUsia}</span>
-                  <ChevronDown className="w-4 h-4 stroke-[2.2]" />
-                </button>
-
-                {openDropdown === 'usia' && (
-                  <div className="absolute right-0 mt-1.5 w-44 bg-white rounded-[16px] shadow-[0_10px_28px_rgba(0,0,0,0.08)] border border-slate-100 py-1.5 z-20">
-                    {USIA_OPTIONS.map((usia) => (
-                      <button
-                        key={usia}
-                        type="button"
-                        onClick={() => {
-                          setSelectedUsia(usia);
-                          setCurrentPage(1);
-                          setOpenDropdown(null);
-                        }}
-                        className={`w-full text-left px-4 py-2 text-[13px] font-semibold transition-colors ${
-                          selectedUsia === usia
-                            ? 'bg-[#C5E3FA]/60 text-[#1D3B58]'
-                            : 'text-[#475569] hover:bg-slate-50'
-                        }`}
-                      >
-                        {usia}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Filter Jenis Kelamin */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setOpenDropdown((prev) =>
-                      prev === 'gender' ? null : 'gender'
-                    )
-                  }
-                  className="bg-white border border-slate-300/90 hover:border-[#2E5780]/60 rounded-full px-4 py-2 text-[13.5px] font-semibold text-[#1E293B] inline-flex items-center gap-2.5 transition-colors cursor-pointer"
-                >
-                  <span>{selectedGender}</span>
-                  <ChevronDown className="w-4 h-4 stroke-[2.2]" />
-                </button>
-
-                {openDropdown === 'gender' && (
-                  <div className="absolute right-0 mt-1.5 w-48 bg-white rounded-[16px] shadow-[0_10px_28px_rgba(0,0,0,0.08)] border border-slate-100 py-1.5 z-20">
-                    {GENDER_OPTIONS.map((gender) => (
-                      <button
-                        key={gender}
-                        type="button"
-                        onClick={() => {
-                          setSelectedGender(gender);
-                          setCurrentPage(1);
-                          setOpenDropdown(null);
-                        }}
-                        className={`w-full text-left px-4 py-2 text-[13px] font-semibold transition-colors ${
-                          selectedGender === gender
-                            ? 'bg-[#C5E3FA]/60 text-[#1D3B58]'
-                            : 'text-[#475569] hover:bg-slate-50'
-                        }`}
-                      >
-                        {gender}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
+        {/* Baris Pencarian & Filter */}
+        <div className="mt-5 flex flex-col md:flex-row items-stretch md:items-center gap-3">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+              placeholder="Cari nama anak...."
+              className="w-full bg-white border border-slate-300/80 focus:border-[#2E5780] focus:outline-none rounded-full pl-5 pr-11 py-2.5 text-[14px] text-[#1E293B] placeholder:text-slate-400 transition-colors"
+            />
+            <Search className="w-5 h-5 text-[#475569] absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
 
-          {/* Tabel Daftar Balita */}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Filter Usia */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() =>
+                  setOpenDropdown((prev) => (prev === 'usia' ? null : 'usia'))
+                }
+                className="min-w-[168px] bg-white border border-slate-300/90 hover:border-[#2E5780]/60 rounded-full px-5 py-2.5 text-[14px] font-semibold text-[#1E293B] inline-flex items-center justify-between gap-3 transition-colors cursor-pointer"
+              >
+                <span>{selectedUsia}</span>
+                <ChevronDown
+                  className={`w-4 h-4 stroke-[2.2] transition-transform duration-200 ${
+                    openDropdown === 'usia' ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              {openDropdown === 'usia' && (
+                <div className="absolute right-0 mt-1.5 w-48 bg-white rounded-[16px] shadow-[0_10px_28px_rgba(0,0,0,0.08)] border border-slate-100 py-1.5 z-20">
+                  {USIA_OPTIONS.map((usia) => (
+                    <button
+                      key={usia}
+                      type="button"
+                      onClick={() => {
+                        setSelectedUsia(usia);
+                        setCurrentPage(1);
+                        setOpenDropdown(null);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-[13.5px] font-semibold transition-colors ${
+                        selectedUsia === usia
+                          ? 'bg-[#C5E3FA]/60 text-[#1D3B58]'
+                          : 'text-[#475569] hover:bg-slate-50'
+                      }`}
+                    >
+                      {usia}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Filter Jenis Kelamin */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() =>
+                  setOpenDropdown((prev) =>
+                    prev === 'gender' ? null : 'gender'
+                  )
+                }
+                className="min-w-[168px] bg-white border border-slate-300/90 hover:border-[#2E5780]/60 rounded-full px-5 py-2.5 text-[14px] font-semibold text-[#1E293B] inline-flex items-center justify-between gap-3 transition-colors cursor-pointer"
+              >
+                <span>{selectedGender}</span>
+                <ChevronDown
+                  className={`w-4 h-4 stroke-[2.2] transition-transform duration-200 ${
+                    openDropdown === 'gender' ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              {openDropdown === 'gender' && (
+                <div className="absolute right-0 mt-1.5 w-48 bg-white rounded-[16px] shadow-[0_10px_28px_rgba(0,0,0,0.08)] border border-slate-100 py-1.5 z-20">
+                  {GENDER_OPTIONS.map((gender) => (
+                    <button
+                      key={gender}
+                      type="button"
+                      onClick={() => {
+                        setSelectedGender(gender);
+                        setCurrentPage(1);
+                        setOpenDropdown(null);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-[13.5px] font-semibold transition-colors ${
+                        selectedGender === gender
+                          ? 'bg-[#C5E3FA]/60 text-[#1D3B58]'
+                          : 'text-[#475569] hover:bg-slate-50'
+                      }`}
+                    >
+                      {gender}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Kartu Tabel Daftar Balita */}
+        <section className="mt-5 bg-white rounded-[24px] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[680px] text-left border-collapse">
               <thead>

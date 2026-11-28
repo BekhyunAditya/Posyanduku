@@ -32,6 +32,9 @@ Route::prefix('ortu')->group(function () {
     // Dashboard
     Route::get('/dashboard', fn() => Inertia::render('OrangTua/DashboardOrtu'));
 
+    // Halaman Panduan Tindakan Personal
+    Route::get('/panduan-tindakan', fn() => Inertia::render('OrangTua/PanduanTindakanPersonal'));
+
     // Pertumbuhan anak
     Route::get('/pertumbuhan', fn() => Inertia::render('OrangTua/PantauPertumbuhan'));
 
@@ -58,8 +61,6 @@ Route::prefix('ortu')->group(function () {
         ]);
     });
 
-    // Alias panduan tindakan
-    Route::get('/panduan-tindakan', fn() => Inertia::render('OrangTua/CatatanKonsultasi'));
 
     // Jadwal Posyandu
     Route::get('/jadwal-posyandu', fn() => Inertia::render('OrangTua/KalenderPosyandu'));
@@ -98,6 +99,7 @@ Route::prefix('ortu')->group(function () {
 Route::prefix('kader')->group(function () {
     Route::get('/dashboard', fn() => Inertia::render('Kader/DashboardKader'));
     Route::get('/data-balita', fn() => Inertia::render('Kader/DataBalita'));
+    Route::get('/data-balita/tambah', fn() => Inertia::render('Kader/TambahBalita'));
     Route::get('/data-balita/{slug}', fn(string $slug) => Inertia::render('Kader/DetailBalita', ['slug' => $slug]));
     Route::get('/pengukuran', fn() => Inertia::render('Kader/CatatPengukuran'));
     Route::get('/pelayanan', fn() => Inertia::render('Kader/PelayananVerifikasi'));
