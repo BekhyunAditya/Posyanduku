@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\UserRole;
+use App\Models\Posyandu;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -30,6 +32,11 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'role' => UserRole::OrangTua,
+            'phone' => fake()->numerify('08##########'),
+            'posyandu_id' => null,
+            'kader_verified_at' => null,
+            'is_active' => true,
         ];
     }
 
@@ -40,6 +47,48 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    public function orangTua(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::OrangTua,
+            'kader_verified_at' => null,
+        ]);
+    }
+
+    public function kader(?Posyandu $posyandu = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::Kader,
+            'posyandu_id' => $posyandu?->id ?? Posyandu::factory(),
+            'kader_verified_at' => now(),
+        ]);
+    }
+
+    public function unverifiedKader(?Posyandu $posyandu = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::Kader,
+            'posyandu_id' => $posyandu?->id ?? Posyandu::factory(),
+            'kader_verified_at' => null,
+        ]);
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::Admin,
+            'posyandu_id' => null,
+            'kader_verified_at' => null,
+        ]);
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_active' => false,
         ]);
     }
 }
