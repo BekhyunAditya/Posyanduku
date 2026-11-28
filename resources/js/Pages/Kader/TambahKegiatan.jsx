@@ -37,7 +37,8 @@ const parseIndoDate = (dateStr) => {
 };
 
 const TambahKegiatan = () => {
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  // null = tampilan form | 'published' = berhasil diterbitkan | 'draft' = draft tersimpan
+  const [submitMode, setSubmitMode] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
 
   const [formData, setFormData] = useState({
@@ -55,6 +56,38 @@ const TambahKegiatan = () => {
     if (errorMsg) setErrorMsg('');
   };
 
+  const saveKegiatanToStorage = (statusLabel) => {
+    const { shortDate, bulan, tahun } = parseIndoDate(
+      formData.tanggal.trim() || '20 November 2026'
+    );
+    const cleanLokasi = formData.lokasi.split(',')[0].trim();
+
+    const newJadwal = {
+      id: Date.now(),
+      kegiatan: formData.namaKegiatan.trim() || 'Draft Kegiatan Posyandu',
+      tanggal: shortDate,
+      bulan,
+      tahun,
+      waktu: formData.waktu.trim() || '08.00 - 11.00',
+      lokasi: cleanLokasi || formData.lokasi.trim() || 'Posyandu Melati 01',
+      sasaran: formData.sasaran.trim(),
+      catatanTambahan: formData.catatanTambahan.trim(),
+      status: statusLabel,
+    };
+
+    try {
+      const existing = JSON.parse(
+        localStorage.getItem(JADWAL_STORAGE_KEY) || '[]'
+      );
+      localStorage.setItem(
+        JADWAL_STORAGE_KEY,
+        JSON.stringify([newJadwal, ...existing])
+      );
+    } catch {
+      // Abaikan jika penyimpanan lokal dibatasi browser
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -70,66 +103,55 @@ const TambahKegiatan = () => {
       return;
     }
 
-    const { shortDate, bulan, tahun } = parseIndoDate(formData.tanggal.trim());
-    const cleanLokasi = formData.lokasi.split(',')[0].trim();
+    saveKegiatanToStorage('Terjadwal');
+    setSubmitMode('published');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-    const newJadwal = {
-      id: Date.now(),
-      kegiatan: formData.namaKegiatan.trim(),
-      tanggal: shortDate,
-      bulan,
-      tahun,
-      waktu: formData.waktu.trim(),
-      lokasi: cleanLokasi || formData.lokasi.trim(),
-      sasaran: formData.sasaran.trim(),
-      catatanTambahan: formData.catatanTambahan.trim(),
-      status: 'Terjadwal',
-    };
-
-    try {
-      const existing = JSON.parse(
-        localStorage.getItem(JADWAL_STORAGE_KEY) || '[]'
-      );
-      localStorage.setItem(
-        JADWAL_STORAGE_KEY,
-        JSON.stringify([newJadwal, ...existing])
-      );
-    } catch {
-      // Abaikan jika penyimpanan lokal dibatasi
+  const handleSaveDraft = () => {
+    if (!formData.namaKegiatan.trim()) {
+      setErrorMsg('Mohon isi nama kegiatan sebelum menyimpan sebagai draft.');
+      return;
     }
 
-    setIsSubmitted(true);
+    saveKegiatanToStorage('Draft');
+    setSubmitMode('draft');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <div className="min-h-screen bg-[#F7F5F0] text-[#1E293B] font-['Plus_Jakarta_Sans',sans-serif] flex flex-col lg:flex-row">
+      {/* Sidebar Kiri (Menu "Jadwal Kegiatan" aktif) */}
       <SidebarKader />
 
+      {/* Konten Utama Kanan */}
       <main className="flex-1 px-5 sm:px-8 lg:px-10 py-6 lg:py-8 max-w-[1200px]">
-        <nav
-          aria-label="Breadcrumb"
-          className="text-[12.5px] font-medium text-[#334155] flex flex-wrap items-center gap-1"
-        >
-          <Link
-            href="/kader/dashboard"
-            className="hover:text-[#2E5780] transition-colors"
-          >
-            Kader
-          </Link>
-          <span>/</span>
-          <Link
-            href="/kader/jadwal-kegiatan"
-            className="hover:text-[#2E5780] transition-colors"
-          >
-            {isSubmitted ? 'Jadwal Kegiatan' : 'Jadwal kegiatan'}
-          </Link>
-          <span>/</span>
-          <span className="text-[#1D3B58] font-semibold">Tambah kegiatan</span>
-        </nav>
-
-        {!isSubmitted ? (
+        {submitMode === null && (
           <>
+            {/* Breadcrumb Form */}
+            <nav
+              aria-label="Breadcrumb"
+              className="text-[12.5px] font-medium text-[#334155] flex flex-wrap items-center gap-1"
+            >
+              <Link
+                href="/kader/dashboard"
+                className="hover:text-[#2E5780] transition-colors"
+              >
+                Kader
+              </Link>
+              <span>/</span>
+              <Link
+                href="/kader/jadwal-kegiatan"
+                className="hover:text-[#2E5780] transition-colors"
+              >
+                Jadwal kegiatan
+              </Link>
+              <span>/</span>
+              <span className="text-[#1D3B58] font-semibold">
+                Tambah kegiatan
+              </span>
+            </nav>
+
             <div className="mt-3">
               <h1 className="text-[30px] sm:text-[36px] font-extrabold text-[#1D3B58] tracking-tight leading-tight">
                 Tambah Kegiatan
@@ -151,6 +173,7 @@ const TambahKegiatan = () => {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Nama Kegiatan */}
                 <div>
                   <label
                     htmlFor="namaKegiatan"
@@ -170,6 +193,7 @@ const TambahKegiatan = () => {
                   />
                 </div>
 
+                {/* Tanggal & Waktu */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label
@@ -211,6 +235,7 @@ const TambahKegiatan = () => {
                   </div>
                 </div>
 
+                {/* Lokasi */}
                 <div>
                   <label
                     htmlFor="lokasiKegiatan"
@@ -228,6 +253,7 @@ const TambahKegiatan = () => {
                   />
                 </div>
 
+                {/* Sasaran */}
                 <div>
                   <label
                     htmlFor="sasaranKegiatan"
@@ -245,6 +271,7 @@ const TambahKegiatan = () => {
                   />
                 </div>
 
+                {/* Catatan Tambahan */}
                 <div>
                   <label
                     htmlFor="catatanTambahan"
@@ -264,6 +291,7 @@ const TambahKegiatan = () => {
                   />
                 </div>
 
+                {/* Tombol Aksi: Tambah kegiatan & Draft */}
                 <div className="pt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <button
                     type="submit"
@@ -274,31 +302,110 @@ const TambahKegiatan = () => {
 
                   <button
                     type="button"
-                    onClick={() => router.visit('/kader/jadwal-kegiatan')}
+                    onClick={handleSaveDraft}
                     className="w-full bg-white hover:bg-slate-50 text-[#1D3B58] text-[15px] font-bold py-3.5 px-6 rounded-full border border-[#2E5780]/70 transition-colors duration-200 cursor-pointer"
                   >
-                    Batal
+                    Draft
                   </button>
                 </div>
               </form>
             </section>
           </>
-        ) : (
-          <div className="mt-3">
-            <h1 className="text-[30px] sm:text-[36px] font-extrabold text-[#1D3B58] tracking-tight leading-tight">
-              Kegiatan berhasil ditambahkan.
-            </h1>
-            <p className="mt-2 text-[14.5px] text-[#334155]">
-              Jadwal akan tampil pada kalender keluarga yang terhubung.
-            </p>
+        )}
 
+        {/* ================= STATE 2: KEGIATAN BERHASIL DITERBITKAN ================= */}
+        {submitMode === 'published' && (
+          <div>
+            <nav
+              aria-label="Breadcrumb"
+              className="text-[12.5px] font-medium text-[#334155] flex flex-wrap items-center gap-1"
+            >
+              <Link
+                href="/kader/dashboard"
+                className="hover:text-[#2E5780] transition-colors"
+              >
+                Kader
+              </Link>
+              <span>/</span>
+              <Link
+                href="/kader/jadwal-kegiatan"
+                className="hover:text-[#2E5780] transition-colors"
+              >
+                Jadwal Kegiatan
+              </Link>
+              <span>/</span>
+              <span className="text-[#1D3B58] font-semibold">
+                Tambah kegiatan
+              </span>
+            </nav>
+
+            <div className="mt-3">
+              <h1 className="text-[30px] sm:text-[36px] font-extrabold text-[#1D3B58] tracking-tight leading-tight">
+                Kegiatan berhasil ditambahkan.
+              </h1>
+              <p className="mt-2 text-[14.5px] text-[#334155]">
+                Jadwal akan tampil pada kalender keluarga yang terhubung.
+              </p>
+
+              <div className="mt-6">
+                <button
+                  type="button"
+                  onClick={() => router.visit('/kader/jadwal-kegiatan')}
+                  className="bg-[#2E5780] hover:bg-[#234466] text-white text-[15px] font-bold px-8 py-3.5 rounded-full inline-flex items-center gap-2.5 shadow-sm transition-all duration-200 cursor-pointer group"
+                >
+                  <span>Lihat jadwal kegiatan</span>
+                  <ArrowRight className="w-4 h-4 stroke-[2.5] transition-transform duration-200 group-hover:translate-x-1" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= STATE 3: DRAFT KEGIATAN TERSIMPAN ================= */}
+        {submitMode === 'draft' && (
+          <div>
+            <nav
+              aria-label="Breadcrumb"
+              className="text-[12.5px] font-medium text-[#334155] flex flex-wrap items-center gap-1"
+            >
+              <Link
+                href="/kader/dashboard"
+                className="hover:text-[#2E5780] transition-colors"
+              >
+                Kader
+              </Link>
+              <span>/</span>
+              <Link
+                href="/kader/jadwal-kegiatan"
+                className="hover:text-[#2E5780] transition-colors"
+              >
+                Jadwal kegiatan
+              </Link>
+              <span>/</span>
+              <span className="text-[#1D3B58] font-semibold">
+                Draft Kegiatan tersimpan
+              </span>
+            </nav>
+
+            <div className="mt-3">
+              <h1 className="text-[30px] sm:text-[36px] font-extrabold text-[#1D3B58] tracking-tight leading-tight">
+                Draft kegiatan tersimpan
+              </h1>
+            </div>
+
+            {/* Banner Biru Muda */}
+            <div className="mt-5 bg-[#B5D5F0] rounded-[16px] px-6 py-5 shadow-[0_4px_16px_rgba(0,0,0,0.04)] text-[#1D3B58] min-h-[84px] flex flex-col justify-center">
+              <p className="text-[13px] font-semibold">Simulasi prototipe</p>
+            </div>
+
+            {/* Tombol Kembali ke Pengelolaan */}
             <div className="mt-6">
               <button
                 type="button"
                 onClick={() => router.visit('/kader/jadwal-kegiatan')}
                 className="bg-[#2E5780] hover:bg-[#234466] text-white text-[15px] font-bold px-8 py-3.5 rounded-full inline-flex items-center gap-2.5 shadow-sm transition-all duration-200 cursor-pointer group"
               >
-                <span>Lihat jadwal kegiatan</span>
+                <span>Kembali ke pengelolaan</span>
                 <ArrowRight className="w-4 h-4 stroke-[2.5] transition-transform duration-200 group-hover:translate-x-1" />
               </button>
             </div>
