@@ -13,7 +13,7 @@ import CatatanKonsulImg from "@/Assets/images/catatan-Konsul.png";
 const TYPING_PHRASES = ["Mudah Memantau", "Tenang Mendampingi"];
 
 const LandingPage = () => {
-    // State untuk animasi ketikan Hero (komentar UI/UX)
+    // State untuk animasi ketikan Hero
     const [phraseIndex, setPhraseIndex] = useState(0);
     const [displayedText, setDisplayedText] = useState(TYPING_PHRASES[0]);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -100,8 +100,10 @@ const LandingPage = () => {
 
     return (
         <div className="min-h-screen bg-[#F7F5F0] text-[#1E293B] font-['Plus_Jakarta_Sans',sans-serif] flex flex-col">
-            {/* Floating Navbar */}
-            <Navbar />
+            {/* Floating Navbar — disamakan lebar container-nya (max-w-[1224px]) dengan <main> */}
+            <div className="w-full [&>header>div]:max-w-[1224px] [&>div]:max-w-[1224px] [&_nav]:max-w-[1224px]">
+                <Navbar />
+            </div>
 
             {/* Main Content */}
             <main className="flex-1 max-w-[1224px] w-full mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-16 space-y-8">
@@ -133,7 +135,7 @@ const LandingPage = () => {
                             {/* Tombol CTA */}
                             <div className="mt-7 flex flex-wrap items-center gap-3.5">
                                 <Link
-                                    href={route('register')}
+                                    href={route("register")}
                                     className="bg-[#F3831E] hover:bg-[#e07414] text-white text-[14px] font-semibold px-7 py-3.5 rounded-full shadow-[0_6px_18px_rgba(243,131,30,0.28)] hover:shadow-[0_8px_22px_rgba(243,131,30,0.36)] transition-all duration-200"
                                 >
                                     Mulai Dampingi Anak
@@ -212,7 +214,7 @@ const LandingPage = () => {
                         </p>
                     </div>
 
-                    {/* Grid 4 Kartu dengan Animasi Zoom-In saat Hover (komentar UI/UX) */}
+                    {/* Grid 4 Kartu dengan Animasi Zoom-In saat Hover */}
                     <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                         {layananList.map((item) => (
                             <div
@@ -310,7 +312,7 @@ const LandingPage = () => {
 
             {/* ================= SECTION 4: FOOTER ================= */}
             <footer id="tentang-kami" className="bg-[#2E5780] text-white">
-                <div className="max-w-[1160px] mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
+                <div className="max-w-[1224px] mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-6">
                         {/* Kolom 1: Brand */}
                         <div className="lg:col-span-4">
@@ -434,14 +436,14 @@ const LandingPage = () => {
                             </h4>
                             <div className="flex flex-col items-start gap-2.5">
                                 <Link
-                                    href={route('login')}
+                                    href={route("login")}
                                     className="bg-white hover:bg-slate-100 text-[#2E5780] text-[12.5px] font-bold px-4 py-2 rounded-full inline-flex items-center gap-1.5 transition-colors shadow-sm"
                                 >
                                     <span>Masuk ke akun</span>
                                     <ArrowRight className="w-3.5 h-3.5" />
                                 </Link>
                                 <Link
-                                    href={route('register')}
+                                    href={route("register")}
                                     className="text-[12.5px] text-white/85 hover:text-white transition-colors pl-1"
                                 >
                                     Daftar orang tua

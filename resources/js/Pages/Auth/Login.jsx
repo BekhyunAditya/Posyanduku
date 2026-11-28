@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import {
@@ -10,6 +9,7 @@ import {
 } from 'lucide-react';
 
 import Navbar from '@/Components/layout/Navbar';
+import IbuAnakLogin from '@/Assets/images/ibu-anak-login.png';
 
 const ROLES = [
     {
@@ -58,7 +58,7 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen bg-[#F7F5F0] flex flex-col pb-12">
+        <div className="min-h-screen bg-[#F7F5F0] flex flex-col pb-12 font-['Plus_Jakarta_Sans',sans-serif]">
             <Navbar />
 
             <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 mt-8">
@@ -260,8 +260,8 @@ export default function Login() {
                                 />
 
                                 <img
-                                    src="/images/ibu-anak-login.png"
-                                    alt="Ibu dan balita PosyanduKu"
+                                    src={IbuAnakLogin}
+                                    alt="Ibu dan balita Posyanduku"
                                     className="relative z-10 w-full object-contain rounded-b-[22px] select-none"
                                 />
                             </div>

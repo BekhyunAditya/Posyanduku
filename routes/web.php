@@ -1,4 +1,3 @@
-
 <?php
 
 use App\Http\Controllers\ProfileController;
@@ -92,9 +91,19 @@ Route::prefix('ortu')->group(function () {
     Route::get('/imunisasi', fn() => Inertia::render('OrangTua/JadwalImunisasi'));
 });
 
+// ========================================
+// PANEL KADER POSYANDU
+// ========================================
 
 Route::prefix('kader')->group(function () {
     Route::get('/dashboard', fn() => Inertia::render('Kader/DashboardKader'));
     Route::get('/data-balita', fn() => Inertia::render('Kader/DataBalita'));
+    Route::get('/data-balita/{slug}', fn(string $slug) => Inertia::render('Kader/DetailBalita', ['slug' => $slug]));
+    Route::get('/pengukuran', fn() => Inertia::render('Kader/CatatPengukuran'));
+    Route::get('/pelayanan', fn() => Inertia::render('Kader/PelayananVerifikasi'));
+    Route::get('/jadwal-kegiatan', fn() => Inertia::render('Kader/JadwalKegiatan'));
+    Route::get('/jadwal-kegiatan/tambah', fn() => Inertia::render('Kader/TambahKegiatan'));
+    Route::get('/jadwal-kegiatan/kunjungan', fn() => Inertia::render('Kader/HasilKunjungan'));
 });
+
 require __DIR__ . '/auth.php';
