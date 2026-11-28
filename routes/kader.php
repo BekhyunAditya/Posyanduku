@@ -1,8 +1,7 @@
 <?php
 
+use App\Http\Controllers\Kader\ChildManagementController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-use Inertia\Response;
 
 // ========================================
 // HALAMAN KADER POSYANDU
@@ -12,10 +11,11 @@ Route::middleware(['auth', 'role:kader', 'verified.kader'])
     ->name('kader.')
     ->group(function (): void {
         Route::inertia('/dashboard', 'Kader/DashboardKader')->name('dashboard');
-        Route::inertia('/data-balita', 'Kader/DataBalita')->name('children.index');
-        Route::inertia('/daftar-balita', 'Kader/DaftarBalita')->name('children.list');
-        Route::get('/balita/{child}', fn (string $child): Response => Inertia::render('Kader/DetailBalitaKader', [
-            'childId' => $child,
-        ]))->name('children.show');
+
+        // Daftar & Detail Balita Binaan (#13)
+        Route::get('/data-balita', [ChildManagementController::class, 'index'])->name('children.index');
+        Route::get('/daftar-balita', [ChildManagementController::class, 'index'])->name('children.list');
+        Route::get('/balita/{child}', [ChildManagementController::class, 'show'])->name('children.show');
+
         Route::inertia('/jadwal-kegiatan', 'Kader/KelolaJadwal')->name('schedules.index');
     });
