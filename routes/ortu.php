@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Ortu\ChildController;
 use App\Http\Controllers\Ortu\ConsultationNoteController;
+use App\Http\Controllers\Ortu\GrowthController;
 use Illuminate\Support\Facades\Route;
 
 // ========================================
@@ -12,7 +13,10 @@ Route::middleware(['auth', 'role:orang_tua'])
     ->name('ortu.')
     ->group(function (): void {
         Route::inertia('/dashboard', 'OrangTua/DashboardOrtu')->name('dashboard');
-        Route::inertia('/pertumbuhan', 'OrangTua/PantauPertumbuhan')->name('growth.index');
+
+        // Pantau Pertumbuhan & Grafik WHO (#16, #17)
+        Route::get('/pertumbuhan', [GrowthController::class, 'index'])->name('growth.index');
+
         Route::inertia('/buku-kia', 'OrangTua/BukuKiaDigital')->name('buku-kia.show');
         Route::inertia('/panduan-kunjungan', 'OrangTua/PanduanKunjungan')->name('visit-guide.index');
 
